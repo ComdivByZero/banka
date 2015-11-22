@@ -291,8 +291,8 @@ func doServer(f *flags) error {
 		s string
 		b base
 	)
-	if len(f.nick) < 3 {
-		err = fmt.Errorf("Длина имени не должна быть меньше 3-х")
+	if len(f.nick) < nickMinLen || len(f.nick) > nickMaxLen {
+		err = fmt.Errorf("Длина имени должна быть в пределах от %v до %v включительно.", nickMinLen, nickMaxLen)
 	} else {
 		b.opts = f
 		b.do = true
@@ -307,6 +307,8 @@ func doServer(f *flags) error {
 			conn, err = net.Dial("tcp", s)
 			if err == nil {
 				go handleConnection(&b, conn)
+			} else {
+				fmt.Sprintf("Контакт %v не отвечает\n", )
 			}
 		}
 		b.listener, err = net.Listen("tcp", fmt.Sprint(":", f.port))
@@ -316,6 +318,9 @@ func doServer(f *flags) error {
 				go handleConnection(&b, conn)
 				conn, err = b.listener.Accept()
 			}
+			err = nil
+		} else {
+			err = fmt.Errorf("Не удалось приступить к прослушиванию порта %v\n\t%v", f.port, err)
 		}
 	}
 	return err
