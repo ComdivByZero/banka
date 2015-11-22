@@ -1,0 +1,2 @@
+# banka
+Naive CLI messenger
